@@ -55,7 +55,7 @@ test("check coordinates should have a ship ",()=>{
 test("ship at coordinates shoud have length",()=>{
     expect(playerone.board[0].hasOwnProperty('length')).toBeTruthy()
 })
-test("recieve attack ship at coordinate should receive hit",()=>{
+test("receive attack ship at coordinate should receive hit",()=>{
     playerone.receiveAttack(0)
 expect(playerone.ships()[0].hits()).toBe(1)
 })

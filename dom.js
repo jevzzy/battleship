@@ -193,7 +193,8 @@ function playerAttack(){
     board.addEventListener('click',(event)=>{
   
   let index = event.target.dataset.index-1;
-  if(ai.receiveAttack(index) == 'cannot attack' || currentPlayer == ai){
+  if(ai.receiveAttack(index) == 'cannot attack' ){
+  
 event.preventDefault()
   }
   else if(currentPlayer == player){

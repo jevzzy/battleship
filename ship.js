@@ -101,7 +101,7 @@ return {
           
             board[coordinates] = 'destroyed'
         }
-        else if(board[coordinates] = 'hit' || ' destroyed'){
+     if(board[coordinates] = 'hit' || ' destroyed'){
             return 'cannot attack'
         }
             
@@ -118,11 +118,3 @@ ships:()=>ships
 }
 }
 
-
-const jude = gameBoard()
-jude.placeShip(0,1)
-
-console.log(jude.ships())
-jude.receiveAttack(0)
-jude.receiveAttack(1)
-console.log(jude.ships()[0].hits())
