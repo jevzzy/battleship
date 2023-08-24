@@ -1,3 +1,4 @@
+
 .title {
     font-size: 150px;
     width: 1500px;
@@ -19,6 +20,7 @@
 #enter-game:hover {
 background-color: rgb(102, 228, 186);
 border: 2px solid white;
+cursor: pointer;
 }
 
 .home-page{
@@ -40,7 +42,7 @@ border: 2px solid white;
     text-align: center;
     margin: 0 auto;
 }
-.done {
+.doneBtn {
     display:none;
     margin: 0 auto;
     width: 100px;
@@ -54,6 +56,14 @@ border: 2px solid white;
     margin-bottom: 40px;
 }
 
+.playership,
+.aiship {
+    display:none;
+}
+
+.fleet {
+    border: 2px solid black;
+}
 .container {
     border: 5px solid black;
     height: 500px;

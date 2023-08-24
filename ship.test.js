@@ -24,15 +24,15 @@ describe("ship types",()=>{
 
     })
     test("carrier length is 5",()=>{
-        const bShip = createShip(types.carrier)
+        const bShip = createShip(0)
         expect(bShip.length).toEqual(5)
     })
     test("battleShip length is 4",()=>{
-        const cShip = createShip(types.battleShip)
+        const cShip = createShip(1)
         expect(cShip.length).toEqual(4)
     })
     test("destroyer length is 2",()=>{
-        const dShip = createShip(types.destroyer)
+        const dShip = createShip(4)
         expect(dShip.length).toEqual(2)
     })
     test("cruiser length is 5",()=>{
@@ -44,7 +44,7 @@ describe("ship types",()=>{
 
 describe("gameboard method",()=>{
 const playerone = gameBoard()
-playerone.placeShip(0,types.submarine)
+playerone.placeShip(0,3)
 test("check coordinates should have a ship ",()=>{
 
 
@@ -57,10 +57,11 @@ test("ship at coordinates shoud have length",()=>{
 })
 test("recieve attack ship at coordinate should receive hit",()=>{
     playerone.receiveAttack(0)
-expect(playerone.board[0].hits()).toBe(1)
+expect(playerone.ships()[0].hits()).toBe(1)
 })
 test("missed attack: keep record of missed attack",()=>{
     playerone.receiveAttack(10)
+    //playerone.board
     expect(playerone.missed()).toContain(10)
 })
 })

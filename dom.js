@@ -1,18 +1,33 @@
-import { createShip,gameBoard,types } from "./ship.js";
-export let frame = document.querySelector('.frame');
-export let container = document.querySelector('.container');
-export let container_2 = document.querySelector('.container-2')
-export let option = document.getElementsByName('select');
-export const rotateBtn = document.querySelector('.rotate-btn');
-export const done = document.querySelector('.done');
-export const start = document.querySelector('#enter-game')
-export const homepage = document.querySelector('.home-page');
-const instruction = document.querySelector('.place-ship')
-export let rotate = false;
+import { gameBoard,types } from "./ship.js";
+ let frame = document.querySelector('.frame');
+ let container = document.querySelector('.container');
+ let container_2 = document.querySelector('.container-2')
+ let option = document.getElementsByName('select');
+ const rotateBtn = document.querySelector('.rotate-btn');
+ const doneBtn = document.querySelector('.doneBtn');
+ const start = document.querySelector('#enter-game')
+const homepage = document.querySelector('.home-page');
+const instruction = document.querySelector('.place-ship');
+ let rotate = false;
+let counter = 0;
 let playerBoard;
 let enemyBoard;
 const player = gameBoard()
 const ai = gameBoard()
+let currentPlayer = player;
+let waitingPlayer = ai;
+
+
+
+//rotate ship button
+rotateBtn.addEventListener('click',()=>{
+
+  if(rotate){
+    rotate = false
+  }else{
+    rotate = true
+  }
+});
 
 //create player gameboard
 function createBoard(){
@@ -46,7 +61,6 @@ playerBoard[num].style.backgroundColor = 'black'
   }
   
 }
-
 }
 //after pressing start button link to page where u place ship
 function placeShipPage(){
@@ -54,21 +68,22 @@ function placeShipPage(){
   frame.style.display = 'flex';
   instruction.style.display = 'block';
   rotateBtn.style.display = 'block';
-  done.style.display = 'block';
+  
 }
-let counter = 0;
+
 //place ship eventlistener
 function placeShips(){
 playerBoard.forEach(board=>{
   
     board.addEventListener('click',(e)=>{
       const index = e.target.dataset.index-1;
-      const ship = Object.values(types)[counter]
-      if(player.placeShip(index,ship,rotate) == 'cannot placeship' || player.placeShip(index,ship,rotate) == 'ship exist'){
+      if(player.placeShip(index,counter,rotate) == 'cannot placeship' || player.placeShip(index,counter,rotate) == 'ship exist'){
         e.preventDefault()
       }else{
-       
-        player.placeShip(index,ship,rotate)
+        player.placeShip(index,counter,rotate)
+        if(player.ships().length == 5){
+          doneBtn.style.display = 'block';
+        }
         display()
         counter++;
       }
@@ -98,111 +113,128 @@ playerBoard.forEach(board=>{
   })
 }
 
-//rotate ship button
-rotateBtn.addEventListener('click',()=>{
-
-  if(rotate){
-    rotate = false
-  }else{
-    rotate = true
+//place ai ships
+function computerships(){
+  let counter = 0
+  let arr = []
+while(counter < 6){
+  let random = Math.floor(Math.random()*99)
+  let rtate = Math.random() > 0.5
+  arr.push(random)
+  if(ai.placeShip(random,counter,rtate) == 'cannot placeship'){
+    counter--
   }
-});
+  console.log(random)
+  console.log(counter)
+  counter++
+}
+}
 
 // begin game
 start.addEventListener('click',()=>{
 placeShipPage();
   createBoard();
   playerBoard = Array.from(container.childNodes)
-console.log(playerBoard)
   placeShips()
+
   });
 
 //after placing ship
-done.addEventListener('click',()=>{
+doneBtn.addEventListener('click',()=>{
+  computerships()
 AttackBoard();
 rotateBtn.style.display = 'none';
-done.style.display = 'none';
+doneBtn.style.display = 'none';
 
 instruction.innerText = 'ATTACK'
 container_2.style.display = 'grid';
 enemyBoard = Array.from( container_2.childNodes)
 playerAttack()
-computerships()
 
 })
-//place ai ships
-function computerships(){
-  const ship = Object.values(types);
-  for(let i = 0;i< ship.length;i++){
-let random = Math.floor(Math.random() * 99)
 
-  ai.placeShip(random,ship[i])
-
+//display bomb placed on board
+function displayBomb(board){
+  for(let i = 0; i < board.length; i++){
+    const bomb = document.createElement('div');
+bomb.style.borderRadius ='20px';
+bomb.style.width = '20px';
+bomb.style.height = '20px';
+bomb.style.margin = '10px auto';
+   let num = i;
+   if(waitingPlayer.board[num] == 'destroyed'){
+    bomb.style.backgroundColor = 'red';
+    //console.log(`hey ---${num}`)
+    if(board[num].hasChildNodes()){
+    console.log('do nthiin')
+    }
+    else{
+      board[num].appendChild(bomb)
+    }
   }
-  console.log(ai.board)
-}
+    if(waitingPlayer.board[num] == 'hit'){
+      bomb.style.backgroundColor = 'black'
+      if(board[num].hasChildNodes()){
+        console.log('do nthiin')
+        }
+        else{
+          board[num].appendChild(bomb)
+        }
+   
+  }
+   }
+   
+  }
+
 //attack ai board
-function playerAttack(e){
-  
+function playerAttack(){
+ 
   enemyBoard.forEach(board=>{
-    board.addEventListener('click',(e)=>{
-  console.log('player one turn')
-  let index = e.target.dataset.index-1
-  let arr = [];
-  if(checkBoards(index,ai,enemyBoard) == false){
-e.preventDefault()
+    board.addEventListener('click',(event)=>{
+  
+  let index = event.target.dataset.index-1;
+  if(ai.receiveAttack(index) == 'cannot attack' || currentPlayer == ai){
+event.preventDefault()
+  }
+  else if(currentPlayer == player){
+    displayBomb(enemyBoard)
+    waitingPlayer = player
+    currentPlayer = ai
+    setTimeout(()=>{
+      aiAttack()
+    },3000);
+    checkWinner(player,ai)
+
   }
 
-board.removeEventListener('click', (e)=>{
-  console.log(e)
-})
-setTimeout(()=>{
-  aiAttack()
-},3000);
+
+
     })
   })
 }
 
-//check attack on board
-function checkBoards(index,ai,enemyBoard){
-  const bomb = document.createElement('div');
-  bomb.style.backgroundColor = 'red';
-  bomb.style.borderRadius ='10px';
-  bomb.style.width = '20px';
-  bomb.style.height = '20px';
-  bomb.style.margin = '10px auto'
-if(ai.board[index] == 'hit'){
- 
-  return false
-}
-if(ai.receiveAttack(index) == true){
-
-
-  enemyBoard[index].appendChild(bomb)
-}
-else{
- 
-
-  bomb.style.backgroundColor = 'black';
- enemyBoard[index].appendChild(bomb)
-}
-}
-
 function aiAttack(){
-  let random = Math.floor( Math.random() * 99)
- 
-  
-  if(checkBoards(random,player,playerBoard) == false){
-    return  aiAttack()
-  }
-  else{
-    checkBoards(random,player,playerBoard)
-  }
+  let index = Math.floor(Math.random() * 99);
+if(currentPlayer == player){
+  console.log('waiting')
+}
+else if(currentPlayer == ai){
+  player.receiveAttack(index)
+  displayBomb(playerBoard)
+  waitingPlayer = ai
+  currentPlayer = player
+}
 
 }
 
 
 
-
-
+function checkWinner(player,ai){
+  if(player.checkShip() == true){
+    console.log('computer is the winner')
+  }
+  if(ai.checkShip() == true){
+    console.log('playerone won')
+  }
+}
 

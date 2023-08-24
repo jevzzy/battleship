@@ -1,4 +1,4 @@
-export const types = {
+ export const types = {
     carrier:5,
     battleShip:4,
     cruiser:3,
@@ -6,13 +6,17 @@ export const types = {
     destroyer:2
 }
 
-export function createShip(num){
-    const length = num
+
+ export function createShip(num){
+    const shipType = Object.keys(types)[num]
+    let length = Object.values(types)[num]
+    const type = shipType
     let damages = 0
     const hit =()=>{damages++}
     const hits =()=> {return damages}
     const isSunk =()=> (damages >= length?true:false)
     return {
+        type,
         hits,
         hit,
         isSunk,
@@ -20,26 +24,9 @@ export function createShip(num){
     }
 }
 
-function firstLaw(index,length){
-    const arr = [9,19,29,39,49,59,69,79,89,99];
-    const num = index + length-1
-    
-    return arr.some(arr=>{
-      return index <= arr && num > arr
-    }) 
-    
-    }
-   function law(coordinate,ship){
-    for(let i= coordinate; i< coordinate + ship.length;i++){
-        if(typeof board[i] !== 'number'){
-            return true
-        }
-        else{
-            return false
-        }
-    }
-   }
-export const coordinateArr = []
+
+   
+ const coordinateArr = []
 function createCoordinates(){
     
     for(let i=0;i<100;i++){
@@ -50,7 +37,7 @@ function createCoordinates(){
 
 createCoordinates()
 
-export function gameBoard(player){
+ export function gameBoard(player){
     const board = [...coordinateArr]
     const missed = []
     const ships = []
@@ -60,34 +47,40 @@ return {
     missed,
  placeShip:(coordinates,ship,rotate)=>{
         const myShip = createShip(ship)
+        
+        function firstLaw(index,length){
+    const arr = [9,19,29,39,49,59,69,79,89,99];
+    const num = index + length-1
+    
+    return arr.some(arr=>{
+      return index <= arr && num > arr
+    }) 
+    
+    }
         if(typeof board[coordinates] !== 'number'  || firstLaw(coordinates,myShip.length) && !rotate || rotate && coordinates >= 90 ){
             return 'cannot placeship'
         }
             if(rotate){
                 let counter = coordinates
+                if(10*myShip.length + counter > 99){return 'cannot placeship'}
                 for(let i = counter;i<coordinates + myShip.length;i++){
+                   
                         board[counter] = myShip
                         counter =  counter + 10
                     
               }
-              
+              ships.push(myShip)
             }
             else{
                 for(let i = coordinates; i< coordinates + myShip.length;i++)
                 {
-                 if(typeof board[i] !='number'){
-                    console.log(false)
-                    
-                    return 'cannot placeship'
-                 }
-                 else{
-                    console.log(true)
-                    board[i] = myShip
-                 }
+                   board[i] = myShip
+                 
                  
               }
+              ships.push(myShip)
                 }
- ships.push(myShip)
+ 
 }  
 ,
  receiveAttack:(coordinates)=>{
@@ -96,15 +89,22 @@ return {
         
             missed.push(coordinates)
             board[coordinates] = 'hit'
-            return false
             }
-            else if(board[coordinates] !== coordinates){
-
-                board[coordinates].hit()
-                board[coordinates] = 'hit'
-    
-               return true
+            else if(typeof board[coordinates] == 'object'){ 
+              let hitship = board[coordinates].type
+          console.log(hitship)
+          ships.forEach(ship=>{
+            if(ship.type = hitship){
+                ship.hit()
             }
+          })
+          
+            board[coordinates] = 'destroyed'
+        }
+        else if(board[coordinates] = 'hit' || ' destroyed'){
+            return 'cannot attack'
+        }
+            
             console.log(board)
 },
 checkShip:()=>{
@@ -112,13 +112,17 @@ checkShip:()=>{
     return ship.isSunk() === true
    })
 },
-missed:()=>missed,
+missed:()=> missed,
 ships:()=>ships
 
 }
 }
 
-const jde = gameBoard()
 
+const jude = gameBoard()
+jude.placeShip(0,1)
 
-
+console.log(jude.ships())
+jude.receiveAttack(0)
+jude.receiveAttack(1)
+console.log(jude.ships()[0].hits())
