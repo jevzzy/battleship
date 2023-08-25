@@ -101,7 +101,7 @@ return {
           
             board[coordinates] = 'destroyed'
         }
-     else if(board[coordinates] == 'hit' || ' destroyed'){
+     else if(board[coordinates] == 'hit' || board[coordinates]== 'destroyed'){
             return 'cannot attack'
         }
             

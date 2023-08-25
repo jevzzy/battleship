@@ -191,6 +191,25 @@ function playerAttack(){
     board.addEventListener('click',(event)=>{
   
   let index = event.target.dataset.index-1;
+    if(currentPlayer === player && ai.receiveAttack(index) !== 'cannot attack') {
+     ai.receiveAttack(index)
+    displayBomb(enemyBoard)
+    waitingPlayer = player
+    currentPlayer = ai
+    setTimeout(()=>{
+      aiAttack()
+    },3000);
+    checkWinner(player,ai)
+    }
+    })
+  })
+}
+/*function playerAttack(){
+ 
+  enemyBoard.forEach(board=>{
+    board.addEventListener('click',(event)=>{
+  
+  let index = event.target.dataset.index-1;
   if(ai.receiveAttack(index) == 'cannot attack'){
 event.preventDefault()
   }
@@ -210,7 +229,7 @@ event.preventDefault()
 
     })
   })
-}
+}*/
 
 function aiAttack(){
   let index = Math.floor(Math.random() * 99);
