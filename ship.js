@@ -80,7 +80,7 @@ return {
               }
               ships.push(myShip)
                 }
- 
+
 }  
 ,
  receiveAttack:(coordinates)=>{
@@ -101,7 +101,7 @@ return {
           
             board[coordinates] = 'destroyed'
         }
-     if(board[coordinates] = 'hit' || ' destroyed'){
+     else if(board[coordinates] == 'hit' || ' destroyed'){
             return 'cannot attack'
         }
             

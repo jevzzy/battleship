@@ -124,8 +124,6 @@ while(counter < 6){
   if(ai.placeShip(random,counter,rtate) == 'cannot placeship'){
     counter--
   }
-  console.log(random)
-  console.log(counter)
   counter++
 }
 }
@@ -193,11 +191,11 @@ function playerAttack(){
     board.addEventListener('click',(event)=>{
   
   let index = event.target.dataset.index-1;
-  if(ai.receiveAttack(index) == 'cannot attack' ){
-  
+  if(ai.receiveAttack(index) == 'cannot attack'){
 event.preventDefault()
   }
-  else if(currentPlayer == player){
+  else {
+    ai.receiveAttack(index)
     displayBomb(enemyBoard)
     waitingPlayer = player
     currentPlayer = ai
