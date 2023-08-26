@@ -74,7 +74,16 @@ cursor: pointer;
      
 
 }
+.container-1 {
+    border: 5px solid black;
+    height: 500px;
+    width: 500px;
+    display:none;
+    grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(10,1fr);
+     
 
+}
 .container-2 {
     border: 5px solid black;
     height: 500px;

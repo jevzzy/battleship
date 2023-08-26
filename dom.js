@@ -1,6 +1,7 @@
 import { gameBoard,types } from "./ship.js";
  let frame = document.querySelector('.frame');
  let container = document.querySelector('.container');
+ let container_1 = document.querySelector('.container-1')
  let container_2 = document.querySelector('.container-2')
  let option = document.getElementsByName('select');
  const rotateBtn = document.querySelector('.rotate-btn');
@@ -11,6 +12,7 @@ const instruction = document.querySelector('.place-ship');
  let rotate = false;
 let counter = 0;
 let playerBoard;
+let s_playerBoard = [];
 let enemyBoard;
 const player = gameBoard()
 const ai = gameBoard()
@@ -137,6 +139,19 @@ placeShipPage();
 
   });
 
+  //board for ai attack
+function playB(){
+  playerBoard.forEach(board=>{
+    board = board.cloneNode(true)
+   s_playerBoard.push(board) 
+  })
+  container.style.display = 'none'
+  container_1.style.display = 'grid'
+  s_playerBoard.forEach(div=>{
+    container_1.appendChild(div)
+  })
+}
+
 //after placing ship
 doneBtn.addEventListener('click',()=>{
   computerships()
@@ -147,6 +162,7 @@ doneBtn.style.display = 'none';
 instruction.innerText = 'ATTACK'
 container_2.style.display = 'grid';
 enemyBoard = Array.from( container_2.childNodes)
+playB()
 playerAttack()
 
 })
@@ -160,24 +176,15 @@ bomb.style.width = '20px';
 bomb.style.height = '20px';
 bomb.style.margin = '10px auto';
    let num = i;
+   board[i].innerHTML = ''
    if(waitingPlayer.board[num] == 'destroyed'){
     bomb.style.backgroundColor = 'red';
-    //console.log(`hey ---${num}`)
-    if(board[num].hasChildNodes()){
-    console.log('do nthiin')
-    }
-    else{
       board[num].appendChild(bomb)
-    }
   }
     if(waitingPlayer.board[num] == 'hit'){
       bomb.style.backgroundColor = 'black'
-      if(board[num].hasChildNodes()){
-        console.log('do nthiin')
-        }
-        else{
-          board[num].appendChild(bomb)
-        }
+       board[num].appendChild(bomb)
+      
    
   }
    }
@@ -201,47 +208,28 @@ function playerAttack(){
     },3000);
     checkWinner(player,ai)
     }
+    console.log(player.checkShip())
     })
   })
 }
-/*function playerAttack(){
- 
-  enemyBoard.forEach(board=>{
-    board.addEventListener('click',(event)=>{
-  
-  let index = event.target.dataset.index-1;
-  if(ai.receiveAttack(index) == 'cannot attack'){
-event.preventDefault()
-  }
-  else {
-    ai.receiveAttack(index)
-    displayBomb(enemyBoard)
-    waitingPlayer = player
-    currentPlayer = ai
-    setTimeout(()=>{
-      aiAttack()
-    },3000);
-    checkWinner(player,ai)
-
-  }
 
 
-
-    })
-  })
-}*/
-
+//computer attack function
 function aiAttack(){
   let index = Math.floor(Math.random() * 99);
 if(currentPlayer == player){
   console.log('waiting')
 }
+else if(player.receiveAttack(index) == 'cannot attack'){
+  return aiAttack()
+}
 else if(currentPlayer == ai){
   player.receiveAttack(index)
-  displayBomb(playerBoard)
+  displayBomb(s_playerBoard)
   waitingPlayer = ai
   currentPlayer = player
 }
+
 
 }
 
@@ -249,10 +237,10 @@ else if(currentPlayer == ai){
 
 function checkWinner(player,ai){
   if(player.checkShip() == true){
-    console.log('computer is the winner')
+    return 'computer is the winner'
   }
   if(ai.checkShip() == true){
-    console.log('playerone won')
+     return 'you won'
   }
 }
 

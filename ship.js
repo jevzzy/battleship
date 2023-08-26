@@ -41,7 +41,7 @@ createCoordinates()
     const board = [...coordinateArr]
     const missed = []
     const ships = []
-
+ 
 return {
     board,
     missed,
@@ -92,7 +92,6 @@ return {
             }
             else if(typeof board[coordinates] == 'object'){ 
               let hitship = board[coordinates].type
-          console.log(hitship)
           ships.forEach(ship=>{
             if(ship.type = hitship){
                 ship.hit()
@@ -105,16 +104,15 @@ return {
             return 'cannot attack'
         }
             
-            console.log(board)
+           
 },
 checkShip:()=>{
-   return ships.every(ship=>{
-    return ship.isSunk() === true
-   })
+ return board.every(bd=>{
+    return typeof bd !== 'object'
+ })
 },
 missed:()=> missed,
-ships:()=>ships
-
+ships:()=> ships
 }
 }
 
